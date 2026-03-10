@@ -124,7 +124,7 @@ Using the provided Python script (`probability_analysis_uniform.py`), we derive 
 
 While the Normal distribution creates smooth S-curves, the Uniform distribution results in a piecewise linear CDF. The curve is composed of two distinct geometric features that correspond directly to our data: The linear ramps represent the ranges (sources A, B, C), with constant rate of cummulating probability across those intervals. The vertical steps represent the scalars (sources D, E, F), where each jump indicates a "point of agreement", where 1/6 (16.6%) of the total probability is concentrated at a single, precise value.  
 
-## 3. Evidence Theory (Dempster-Shafer (D-S) Theory)
+## 3. Evidence Theory (Dempster-Shafer Theory)
 
 While Probability Theory forces us to distribute likelihood across a range (even if we don't know the shape), Evidence Theory (also called Dempster-Shafer theory) allows us to measure uncertainty through Belief and Plausibility.
 
