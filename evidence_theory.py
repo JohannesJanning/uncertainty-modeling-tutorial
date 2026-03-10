@@ -69,6 +69,22 @@ plt.tight_layout()
 plt.savefig('figures/Figure_4_evidence.png', dpi=300)
 plt.show()
 
-# Terminal Output for GitHub logic check
-print(f"Evidence Theory Model Complete.")
-print(f"At GWP=100: Bel={np.interp(100, x_vals, bel_vals):.2f}, Pl={np.interp(100, x_vals, pl_vals):.2f}")
+# 4. Calculating Expected Value Bounds (Means)
+# In Evidence Theory, the expected value is an interval [E_lower, E_upper]
+
+# E_lower: The most conservative average (using the low bounds of all studies)
+e_min = sum(mass * d["bounds"][0] for d in data)
+
+# E_upper: The most optimistic average (using the high bounds of all studies)
+e_max = sum(mass * d["bounds"][1] for d in data)
+
+# --- TERMINAL OUTPUT ---
+print("-" * 40)
+print("EVIDENCE THEORY: SUMMARY STATISTICS")
+print("-" * 40)
+print(f"Expected Value Interval: [{e_min:.2f}, {e_max:.2f}] kg CO2e/kWh")
+print(f"Total Ignorance (Width):  {(e_max - e_min):.2f} units")
+print("-" * 40)
+print(f"At GWP=115.0: Bel={np.interp(115.0, x_vals, bel_vals):.2f}, Pl={np.interp(115.0, x_vals, pl_vals):.2f}")
+print("Note: Bel=Pl at 115.0 indicates a point of perfect consensus.")
+print("-" * 40)

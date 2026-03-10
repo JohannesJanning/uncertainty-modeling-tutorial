@@ -1,6 +1,6 @@
 # Example for Uncertainty Modeling
 
-this is an example on how to derive uncertainty model from sparse data. 
+A worked example showing how to transform sparse data into quantifiable uncertainty models for early-stage design decision-making.
 
 ## The data (example):
 
@@ -8,12 +8,12 @@ we assume to want to perform an early-stage conceptual design an electric vehilc
 
 | GWP ($kg CO_2e / kWh$) | Value           | Source                     |
 |------------------------|-----------------|----------------------------|
-| 60-93.2                | Range           | (A) Abdelbaky et al. (ref) |
-| 60-150                 | Range           | (B) Amarakoon et al. (ref) |
-| 120.5-172.9            | Range           | (C) André & Hajek (ref)    |
-| 170.5                  | Scalar          | (D) Liberacki et al. (ref) |
-| 115                    | Scalar          | (E) Pollet et al. (ref)    |
-| 72.9                   | Scalar          | (F) Pontika et al. (ref)   |
+| 60-93.2                | Range           | (A) Abdelbaky et al.[^A]   |
+| 60-150                 | Range           | (B) Amarakoon et al.[^B]   |
+| 120.5-172.9            | Range           | (C) André & Hajek[^C]      |
+| 170.5                  | Scalar          | (D) Liberacki et al.[^D]    |
+| 115                    | Scalar          | (E) Pollet et al.[^E]       |
+| 72.9                   | Scalar          | (F) Pontika et al.[^F]      |
 
 As we have multiple sources with different reported values, we are confronted with *epsitemic* uncertainty, categorized as a lack of knowledge. As the real world lifecycle battery energy specific GWP of our future battery system in-use will have a fix value, it is not inherent variable (aletory uncertainty).
 
@@ -126,18 +126,17 @@ While Probability Theory forces us to distribute likelihood across a range (even
 
 In this model, we assign a Basic Belief Assignment (BBA), denoted as $m$, to each piece of evidence. If we trust our 6 sources equally, each receives a mass of $m=1/6$.
 
-- Cumulative Belief Function (CBF - Red): This is the conservative lower bound. It represents the evidence that must be true. For a given value x, the CBF only increases if a study's entire range is below x. Belief (Bel) - The Lower Bound: Represents the total evidence that strictly supports a proposition. For a GWP value x, Bel(x) is the sum of masses where the entire reported interval is below x. It is our "guaranteed" certainty.
+- Cumulative Belief Function (CBF - Red): This is the conservative lower bound. For a given value x, the CBF only increases if a study's entire range is below x. The Belief (Bel) (the lower bound) represents the total evidence that strictly supports a proposition. For a GWP value x, Bel(x) is the sum of masses where the entire reported interval is below x. It is our "guaranteed" certainty.
  
-  \[
+  $$
   CBF(x) = \sum_{B \subseteq (-\infty, x]} m(B)
-  \]
+  $$
 
-- Cumulative Plausibility Function (CPF - Blue): This is the "optimistic" upper bound. It represents the evidence that could be true. For a given value x, the CPF increases if even just the lowest point of a study's range is below x. Plausibility (Pl) - The Upper Bound: Represents the total evidence that could be true (i.e., not yet ruled out). For a GWP value x, Pl(x) is the sum of masses where at least part of the reported interval is below x.
+- Cumulative Plausibility Function (CPF - Blue): This is the optimistic upper bound. It represents the evidence that could be true. For a given value x, the CPF increases if even just the lowest point of a study's range is below x. The Plausibility (Pl) (the upper bound) represents the total evidence that could be true (i.e., not yet ruled out). For a GWP value x, Pl(x) is the sum of masses where at least part of the reported interval is below x.
 
-  \[
+  $$
   CPF(x) = \sum_{B \cap (-\infty, x] \neq \emptyset} m(B)
-  \]
-
+  $$
 
 Instead of a single CDF curve, Evidence Theory produces two bounding curves that create a Probability Box (P-Box), illustrating how belief and plausibility define a probability interval as lower and upper bounds. Using the provided Python script (evidence_theory.py), we visualize the literature data (Figure 4):
 
@@ -145,4 +144,26 @@ Instead of a single CDF curve, Evidence Theory produces two bounding curves that
 
 The gray shaded area between the Blue (Plausibility) and Red (Belief) lines is a direct measurement of our lack of knowledge (ignorance). Where the lines are far apart (e.g., between 90 and 120), the literature is either vague or conflicting. Where they pinch together (e.g., at the scalar points), our certainty is higher because the sources provided precise values. A risk-averse designer would look at the Belief curve (Red) to see what can be proven, while a risk-tolerant designer might look at the Plausibility curve (Blue) to see what is possible.
 
-## Sources
+We notice that at approximately 115 $kg CO_2e/kWh$, the Cumulative Belief Function (CBF) and Cumulative Plausibility Function (CPF) converge, momentarily eliminating the "Area of Ignorance." This indicates a point of consensus across the disparate literature sources. At this specific threshold, there is no ambiguity: exactly 50% of the evidence supports a GWP of 115 or lower. This is largely driven by the presence of Source E (Pollet et al.), which provides a precise scalar value of 115, effectively anchoring the probability box and providing a moment of certainty amidst the surrounding epistemic gaps. Assume presenting this to a stakeholder, we can point to 115 as your most robust estimate. Unlike other values where we are "guessing" within a gray zone of ignorance, 115 is the value where our conservative evidence (Belief) and our optimistic potential (Plausibility) perfectly align.
+
+In Evidence Theory, we don't get a single mean or standard deviation like we do in Probability Theory because the theory is designed to avoid making a single guess. Instead of a single number, we get an interval of possible means, known as the Lower Expected Value ($E_{low}) (calculated using the Belief curve) and Upper Expected Value $E_{high} (calculated using the Plausibility curve). 
+
+For your specific dataset it is the interval [99.82, 129.08]. This tells the decision-maker: "Based on the evidence, the average GWP is somewhere in this range, and our ignorance prevents us from being more precise."
+
+
+
+## References
+
+[^1]: The theoretical framework for uncertainty modeling in this work is based on: Wen Yao, Xiaoqian Chen, Wencai Luo, Michel Van Tooren, and Jian Guo. *Review of uncertainty-based multidisciplinary design optimization methods for aerospace vehicles*. Progress in Aerospace Sciences, 47(6):450–479, August 2011.
+
+[^A]: Mohammad Abdelbaky, Lilian Schwich, João Henriques, Bernd Friedrich, Jef R. Peeters, and Wim Dewulf. *Global warming potential of lithium-ion battery cell production: Determining influential primary and secondary raw material supply routes*. Cleaner Logistics and Supply Chain, 9:100130, December 2023.
+
+[^B]: Shanika Amarakoon, Jay Smith, and Brian Segal. *Application of Life-Cycle Assessment to Nanoscale Technology: Lithium-ion Batteries for Electric Vehicles*, April 2013.
+
+[^C]: Nicolas André and Manfred Hajek. *Robust Environmental Life Cycle Assessment of Electric VTOL Concepts for Urban Air Mobility*. In AIAA Aviation 2019 Forum, Dallas, Texas, June 2019. American Institute of Aeronautics and Astronautics.
+
+[^D]: Adam Liberacki, Barbara Trincone, Gabriella Duca, Luigi Aldieri, Concetto Paolo Vinci, and Fabio Carlucci. *The Environmental Life Cycle Costs (ELCC) of Urban Air Mobility (UAM) as an input for sustainable urban mobility*. Journal of Cleaner Production, 389:136009, February 2023.
+
+[^E]: Félix Pollet, Florent Lutz, Thomas Planès, Scott Delbecq, and Marc Budinger. *A generic life cycle assessment tool for overall aircraft design*. Applied Energy, 399:126514, December 2025.
+
+[^F]: Evangelia Pontika, Panagiotis Laskaridis, and Phillip J. Ansell. *Technology exploration of zero-emission regional aircraft: Why, what, when and how?* August 2025.
