@@ -2,9 +2,18 @@
 
 A worked example showing how to transform sparse data into quantifiable uncertainty models for early-stage design decision-making.
 
-## The data (example):
+## Table of Contents
+- [The Data](#the-data)
+- [1. Interval Analysis](#1-interval-analysis)
+- [2. Probability Theory](#2-probability-theory)
+  - [2.1 Normal Distribution](#21-normal-distribution)
+  - [2.2 Uniform Distribution](#22-uniform-distribution)
+- [3. Evidence Theory (Dempster-Shafer Theory)](#3-evidence-theory-dempster-shafer-theory)
+- [References](#references)
 
-we assume to want to perform an early-stage conceptual design an electric vehilce system using lithium-ion battery (LIB) electric propulsion (electric ground vehicle, electric aircraft, electric maritime system etc.). For assesing the lifecycle battery energy specific Global Warming Potential (GWP) ($kg CO_2e/kWh$), that is the time scaled (on 100 years) global warming potential per energy unit (kWh) of the specifc energy the battery we use. We do an intial literature review and find following values:
+## The Data:
+
+We assume to want to perform an early-stage conceptual design an electric vehilce system using lithium-ion battery (LIB) electric propulsion (electric ground vehicle, electric aircraft, electric maritime system etc.). For assesing the lifecycle battery energy specific Global Warming Potential (GWP) ($kg CO_2e/kWh$), that is the time scaled (on 100 years) global warming potential per energy unit (kWh) of the specifc energy the battery we use. We do an intial literature review and find following values:
 
 | GWP ($kg CO_2e / kWh$) | Value           | Source                     |
 |------------------------|-----------------|----------------------------|
@@ -17,29 +26,34 @@ we assume to want to perform an early-stage conceptual design an electric vehilc
 
 As we have multiple sources with different reported values, we are confronted with *epsitemic* uncertainty, categorized as a lack of knowledge. As the real world lifecycle battery energy specific GWP of our future battery system in-use will have a fix value, it is not inherent variable (aletory uncertainty).
 
-In the following, we present three simple ways to quantify the reported values into an uncertainty metrics, that can be further utilized within an decision making process (design, lifecycle assessement, etc.). 
+In the following, we present three simple ways to quantify the reported values into an uncertainty metrics, that can be further utilized within an decision making process (design, lifecycle assessement, etc.)[^1]. 
 
-## Interval Analysis 
+## 1. Interval Analysis 
 
 Interval analysis is the most basic way to handle "non-stochastic" uncertainty. It assumes we know the limits of a value but have zero knowledge of the distribution within those limits. We simply know our data ranges from a minimum to a maximum, but have no information on its inherent cummulation. 
 
 We treat every data point as set $X = [a, b]$. For a single value like 170.5, the interval is simply [170.5, 170.5]. 
 We take the union of all sets $(min(all $X$), max(all $X$))$ to define the interval of our data. 
 
-$GWP_{bat_{min}}$ = min(all X) = 60.0 $kg CO_2e/kWh$
-$GWP_{bat_{max}}$ = max(all X) = 172.9 $kg CO_2e/kWh$
+$$
+GWP_{bat_{min}}$ = min(all X) = 60.0 $kg CO_2e/kWh
+$$
 
-Resulting in [60.0, 172.9] $kg CO_2e/kWh$ and illustrated in Figure 1. 
+$$
+$GWP_{bat_{max}}$ = max(all X) = 172.9 $kg CO_2e/kWh$
+$$
+
+Using the script (`interval_analysis.py`), this results in [60.0, 172.9] $kg CO_2e/kWh$ and illustrated in Figure 1. 
 
 ![Figure 1: Interval Analysis](figures/Figure_1_interval.png)
 
 Interval anaylsis provides a safety envelope and provides a robust tool when adding no assumptions itself introducing new uncertainty. However it is pessimistic as it ignores the fact that data points might cluster wihtin specifc ranges.
 
-## Probability Theory
+## 2. Probability Theory
 
 While Interval Analysis provides the absolute boundaries of our data, it treats all values within those boundaries as equally unknown. However, in decision-making we often assume that there is a central tendency, meaning the true value is more likely to be near the average of reported values than at the extreme edges. To model this, we can use Probability Theory. We discuss two approaches to handle uncertainty with probability theory.
 
-### Normal Distribution
+### 2.1 Normal Distribution
 
 Since we are dealing with sparse literature data, we treat each source as a separate probability distribution and aggregate them into a single Mixture Model. In this approach, we make the following assumptions for each literature source $i$:
 
@@ -66,33 +80,38 @@ $$
 
 Where $\Phi$ is the **standard normal CDF**.
 
-Using the provided Python script (probability_analysis_normal.py), we derive the following statistical model for the Battery GWP (Figure 2):
+Using the provided Python script (`probability_analysis_normal.py`), we derive the following statistical model for the Battery GWP (Figure 2):
 
-The "consensus" average of all literature.
-$$
-\mu_{normal} = 114.45 $kg CO_2e/kWh$ 
-$$
+The "consensus" average of all literature:
 
-A measure of how much the studies disagree.
 $$
-\sigma_{uniform} = 37.25 $kg CO_2e/kWh$
+\mu_{normal} = 114.45 \, kg CO_2e/kWh
 $$
 
-The optimistic boundary (2.5% quantile)
+A measure of how much the studies disagree:
+
 $$
-95\% CI lower = 65.26 $kg CO_2e/kWh$
+\sigma_{normal} = 37.25 \, kg CO_2e/kWh
 $$
 
-The conservative boundary (97.5% quantile).
+The optimistic boundary (2.5% quantile):
+
 $$
-95\% CI upper = 179.61 $kg CO_2e/kWh$
+95\% \text{ CI lower} = 65.26 \, kg CO_2e/kWh
 $$
+
+The conservative boundary (97.5% quantile):
+
+$$
+95\% \text{ CI upper} = 179.61 \, kg CO_2e/kWh
+$$
+
 
 A large Standard Deviation (like the ~33% relative SD we see here) is a quantitative signal of high epistemic uncertainty. It tells the designer that the literature is significantly divided on the true GWP of the battery system.
 
 ![Figure 2: Normal Distribution](figures/Figure_2_normal.png)
 
-### Uniform Distribution 
+### 2.2 Uniform Distribution 
 
 While the Normal distribution assumes a central tendency (that the middle of a range is more likely), the Uniform Distribution is more conservative. It assumes that for any given study, every value within the reported range is equally likely. This approach is often preferred when we have no evidence to suggest the true value is in the center of a range rather than at the boundaries.
 
@@ -111,16 +130,16 @@ $$
 
 Using the provided Python script (probability_analysis_uniform.py), we derive the following statistical model (Figure 3):
 
-Mean ($\mu_{uniform}$): 114.45 $kg CO_2e/kWh$
-Standard Deviation ($\sigma_{uniform}$): 37.47 $kg CO_2e/kWh$
-95% CI Lower (2.5%): 63.64 $kg CO_2e/kWh$
-95% CI Upper (97.5%): 170.53 $kg CO_2e/kWh$
+- Mean ($\mu_{uniform}$): 114.45 $kg CO_2e/kWh$
+- Standard Deviation ($\sigma_{uniform}$): 37.47 $kg CO_2e/kWh$
+- 95% CI Lower (2.5%): 63.64 $kg CO_2e/kWh$
+- 95% CI Upper (97.5%): 170.53 $kg CO_2e/kWh$
 
 ![Figure 3: Normal Distribution](figures/Figure_3_uniform.png)
 
 While the Normal distribution creates smooth S-curves, the Uniform distribution results in a piecewise linear CDF. The curve is composed of two distinct geometric features that correspond directly to our data: The linear ramps represent the ranges (sources A, B, C), with constant rate of cummulating probability across those intervals. The verticla steps represent the scalars (sources D, E, F), where each jump indicates a "point of agreement", where 1/6 (16.6%) of the total probability is concentrated at a single, precise value.  
 
-## Evidence Theory (Dempster-Shafer (D-S) Theory)
+## 3. Evidence Theory (Dempster-Shafer (D-S) Theory)
 
 While Probability Theory forces us to distribute likelihood across a range (even if we don't know the shape), Evidence Theory (also called Dempster-Shafer theory) allows us to measure uncertainty through Belief and Plausibility.
 
@@ -146,7 +165,7 @@ The gray shaded area between the Blue (Plausibility) and Red (Belief) lines is a
 
 We notice that at approximately 115 $kg CO_2e/kWh$, the Cumulative Belief Function (CBF) and Cumulative Plausibility Function (CPF) converge, momentarily eliminating the "Area of Ignorance." This indicates a point of consensus across the disparate literature sources. At this specific threshold, there is no ambiguity: exactly 50% of the evidence supports a GWP of 115 or lower. This is largely driven by the presence of Source E (Pollet et al.), which provides a precise scalar value of 115, effectively anchoring the probability box and providing a moment of certainty amidst the surrounding epistemic gaps. Assume presenting this to a stakeholder, we can point to 115 as your most robust estimate. Unlike other values where we are "guessing" within a gray zone of ignorance, 115 is the value where our conservative evidence (Belief) and our optimistic potential (Plausibility) perfectly align.
 
-In Evidence Theory, we don't get a single mean or standard deviation like we do in Probability Theory because the theory is designed to avoid making a single guess. Instead of a single number, we get an interval of possible means, known as the Lower Expected Value ($E_{low}) (calculated using the Belief curve) and Upper Expected Value $E_{high} (calculated using the Plausibility curve). 
+In Evidence Theory, we don't get a single mean or standard deviation like we do in Probability Theory because the theory is designed to avoid making a single guess. Instead of a single number, we get an interval of possible means, known as the Lower Expected Value ($E_{low}$, calculated using the Belief curve) and Upper Expected Value ($E_{high}$, calculated using the Plausibility curve). 
 
 For your specific dataset it is the interval [99.82, 129.08]. This tells the decision-maker: "Based on the evidence, the average GWP is somewhere in this range, and our ignorance prevents us from being more precise."
 
