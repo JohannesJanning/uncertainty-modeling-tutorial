@@ -154,6 +154,14 @@ In Evidence Theory, we don't get a single mean or standard deviation like we do 
 
 For your specific dataset it is the interval [99.82, 129.08]. This tells the decision-maker: "Based on the evidence, the average GWP is somewhere in this range, and our ignorance prevents us from being more precise."
 
+## Summary of Uncertainty Methods
+
+| Method           | Estimated Mean / Range         | Key Takeaway |
+|------------------|--------------------------------|--------------|
+| Interval         | [60.0, 172.9] $kg CO_2e/kWh$  | Maximum possible bounds; no assumptions about internal distribution. |
+| Probability (Normal) | 114.45 ± 37.25 $kg CO_2e/kWh$ | Most likely central value with normally distributed tails extending beyond observed data. |
+| Probability (Uniform) | 114.45 (95% CI: 63.6–170.5) $kg CO_2e/kWh$ | Equal likelihood across all reported ranges; piecewise linear CDF. |
+| Evidence (D-S)   | Expected value: [99.8, 129.1] $kg CO_2e/kWh$ | Quantifies ignorance via Belief-Plausibility gap; consensus point at 115. |
 
 
 ## References
