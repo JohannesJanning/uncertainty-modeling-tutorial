@@ -33,14 +33,14 @@ In the following, we present three simple ways to quantify the reported values i
 Interval analysis is the most basic way to handle "non-stochastic" uncertainty. It assumes we know the limits of a value but have zero knowledge of the distribution within those limits. We simply know our data ranges from a minimum to a maximum, but have no information on its inherent cummulation. 
 
 We treat every data point as set $X = [a, b]$. For a single value like 170.5, the interval is simply [170.5, 170.5]. 
-We take the union of all sets $(min(all $X$), max(all $X$))$ to define the interval of our data. 
+We take the union of all sets $(\min(\text{all } X), \max(\text{all } X))$ to define the interval of our data.
 
 $$
-GWP_{bat_{min}}$ = min(all X) = 60.0 $kg CO_2e/kWh
+GWP_{bat_{\min}} = \min(\text{all X}) = 60.0 \, kg CO_2e/kWh
 $$
 
 $$
-$GWP_{bat_{max}}$ = max(all X) = 172.9 $kg CO_2e/kWh$
+GWP_{bat_{\max}} = \max(\text{all X}) = 172.9 \, kg CO_2e/kWh
 $$
 
 Using the script (`interval_analysis.py`), this results in [60.0, 172.9] $kg CO_2e/kWh$ and illustrated in Figure 1. 
@@ -82,30 +82,17 @@ Where $\Phi$ is the **standard normal CDF**.
 
 Using the provided Python script (`probability_analysis_normal.py`), we derive the following statistical model for the Battery GWP (Figure 2):
 
-The "consensus" average of all literature:
+- **Mean ($\mu_{normal}$):** 114.45 $kg CO_2e/kWh$  
+  *The "consensus" average of all literature.*
 
-$$
-\mu_{normal} = 114.45 \, kg CO_2e/kWh
-$$
+- **Standard Deviation ($\sigma_{normal}$):** 37.25 $kg CO_2e/kWh$  
+  *A measure of how much the studies disagree.*
 
-A measure of how much the studies disagree:
+- **95% CI Lower Bound (2.5% quantile):** 65.26 $kg CO_2e/kWh$  
+  *The optimistic boundary.*
 
-$$
-\sigma_{normal} = 37.25 \, kg CO_2e/kWh
-$$
-
-The optimistic boundary (2.5% quantile):
-
-$$
-95\% \text{ CI lower} = 65.26 \, kg CO_2e/kWh
-$$
-
-The conservative boundary (97.5% quantile):
-
-$$
-95\% \text{ CI upper} = 179.61 \, kg CO_2e/kWh
-$$
-
+- **95% CI Upper Bound (97.5% quantile):** 179.61 $kg CO_2e/kWh$  
+  *The conservative boundary.*
 
 A large Standard Deviation (like the ~33% relative SD we see here) is a quantitative signal of high epistemic uncertainty. It tells the designer that the literature is significantly divided on the true GWP of the battery system.
 
@@ -128,7 +115,7 @@ $$
 P(X \le x) = \frac{1}{n}\sum_{i=1}^{n} F_i(x)
 $$
 
-Using the provided Python script (probability_analysis_uniform.py), we derive the following statistical model (Figure 3):
+Using the provided Python script (`probability_analysis_uniform.py`), we derive the following statistical model (Figure 3):
 
 - Mean ($\mu_{uniform}$): 114.45 $kg CO_2e/kWh$
 - Standard Deviation ($\sigma_{uniform}$): 37.47 $kg CO_2e/kWh$
@@ -157,7 +144,7 @@ In this model, we assign a Basic Belief Assignment (BBA), denoted as $m$, to eac
   CPF(x) = \sum_{B \cap (-\infty, x] \neq \emptyset} m(B)
   $$
 
-Instead of a single CDF curve, Evidence Theory produces two bounding curves that create a Probability Box (P-Box), illustrating how belief and plausibility define a probability interval as lower and upper bounds. Using the provided Python script (evidence_theory.py), we visualize the literature data (Figure 4):
+Instead of a single CDF curve, Evidence Theory produces two bounding curves that create a Probability Box (P-Box), illustrating how belief and plausibility define a probability interval as lower and upper bounds. Using the provided Python script (`evidence_theory.py`), we visualize the literature data (Figure 4):
 
 ![Figure 4: Evidence Theory](figures/Figure_4_evidence.png)
 
