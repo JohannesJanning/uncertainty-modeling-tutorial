@@ -15,6 +15,8 @@ A worked example showing how to transform sparse data into quantifiable uncertai
 
 Consider an early-stage conceptual design of an electric vehicle system employing lithium-ion battery (LIB) electric propulsion. This encompasses various applications, including electric ground vehicles, aircraft, and maritime systems. To assess the lifecycle Global Warming Potential (GWP) of the battery system, we focus on the specific energy-based metric ($kg CO_2e/kWh$) — the 100-year time-scaled global warming potential per kilowatt-hour of battery energy capacity. An initial literature review yields the following reported values:
 
+<div align="center">
+
 | GWP ($kg CO_2e / kWh$) | Value           | Source                     |
 |------------------------|-----------------|----------------------------|
 | 60-93.2                | Range           | (A) Abdelbaky et al.[^A]   |
@@ -23,6 +25,8 @@ Consider an early-stage conceptual design of an electric vehicle system employin
 | 170.5                  | Scalar          | (D) Liberacki et al.[^D]    |
 | 115                    | Scalar          | (E) Pollet et al.[^E]       |
 | 72.9                   | Scalar          | (F) Pontika et al.[^F]      |
+
+</div>
 
 The discrepancy among sources introduces *epistemic* uncertainty, defined as uncertainty due to incomplete knowledge of the system. Crucially, the true lifecycle GWP of the future battery system is a fixed value, albeit unknown at this stage. This distinguishes it from *aleatory* uncertainty, which arises from inherent variability. The following sections present three approaches to quantify this epistemic uncertainty, translating the sparse literature data into formal uncertainty metrics suitable for integration into decision-making frameworks (e.g., design optimization, lifecycle assessment)[^1].
 
