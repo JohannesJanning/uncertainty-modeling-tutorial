@@ -24,11 +24,11 @@ Consider an early-stage conceptual design of an electric vehicle system employin
 | 115                    | Scalar          | (E) Pollet et al.[^E]       |
 | 72.9                   | Scalar          | (F) Pontika et al.[^F]      |
 
-The discrepancy among sources introduces *epistemic* uncertainty, defined as uncertainty due to incomplete knowledge of the system. Crucially, the true lifecycle GWP of the future battery system is a fixed value, albeit unknown at this design stage. This distinguishes it from *aleatory* uncertainty, which arises from inherent variability. The following sections present three approaches to quantify this epistemic uncertainty, translating the sparse literature data into formal uncertainty metrics suitable for integration into decision-making frameworks (e.g., design optimization, lifecycle assessment)[^1].
+The discrepancy among sources introduces *epistemic* uncertainty, defined as uncertainty due to incomplete knowledge of the system. Crucially, the true lifecycle GWP of the future battery system is a fixed value, albeit unknown at this stage. This distinguishes it from *aleatory* uncertainty, which arises from inherent variability. The following sections present three approaches to quantify this epistemic uncertainty, translating the sparse literature data into formal uncertainty metrics suitable for integration into decision-making frameworks (e.g., design optimization, lifecycle assessment)[^1].
 
 ## 1. Interval Analysis 
 
-Interval analysis is the most basic way to handle "non-stochastic" uncertainty. It assumes we know the limits of a value but have zero knowledge of the distribution within those limits. We simply know our data ranges from a minimum to a maximum, but have no information on its inherent cummulation. 
+Interval analysis provides a fundamental approach to handling non-stochastic uncertainty. It assumes knowledge of a value's bounds — its minimum and maximum — but no information about the distribution of values within those bounds. While we know the range spanned by the data, we have no insight into how values accumulate or cluster within that interval.
 
 We treat every data point as set $X = [a, b]$. For a single value like 170.5, the interval is simply [170.5, 170.5]. 
 We take the union of all sets $(\min(\text{all } X), \max(\text{all } X))$ to define the interval of our data.
@@ -45,17 +45,17 @@ Using the script (`interval_analysis.py`), this results in [60.0, 172.9] $kg CO_
 
 ![Figure 1: Interval Analysis](figures/Figure_1_interval.png)
 
-Interval anaylsis provides a safety envelope and provides a robust tool when adding no assumptions itself introducing new uncertainty. However it is pessimistic as it ignores the fact that data points might cluster wihtin specifc ranges.
+Figure 1 illustrates the resulting interval (shown in red) as the union of all individual data ranges, along with the distribution of each data point across the total span (y-axis). Interval analysis provides a robust safety envelope by introducing no additional assumptions about the data. However, this approach is inherently conservative, as it disregards any potential clustering of values within specific sub-ranges.
 
 ## 2. Probability Theory
 
-While Interval Analysis provides the absolute boundaries of our data, it treats all values within those boundaries as equally unknown. However, in decision-making we often assume that there is a central tendency, meaning the true value is more likely to be near the average of reported values than at the extreme edges. To model this, we can use Probability Theory. We discuss two approaches to handle uncertainty with probability theory.
+While Interval Analysis provides the absolute boundaries of our data, it treats all values within those boundaries as equally unknown. However, in decision-making we often assume that there is a central tendency, meaning the true value is more likely to be near the average of reported values than at the extreme edges. To model this, we can use Probability Theory. We discuss two approaches to handle uncertainty with Probability Theory.
 
 ### 2.1 Normal Distribution
 
 Since we are dealing with sparse literature data, we treat each source as a separate probability distribution and aggregate them into a single Mixture Model. In this approach, we make the following assumptions for each literature source $i$:
 
-The Mean ($\mu_i$): We asume the most likely value is the center of the reported range. For scalars the mean is the value itsled:
+The Mean ($\mu_i$): We asume the most likely value is the center of the reported range. For scalars the mean is the value itself:
 
 $$
 \mu_i = \frac{Low_i + High_i}{2}
@@ -69,14 +69,14 @@ $$
 
 For scalar values $(D, E, F)$ we assume a small 5% coefficient of variation to account for inherent measurement error.
 
-We combine all $n$ sources by averaging their **Cumulative Distribution Functions (CDFs)**.  
-This gives every study an equal **vote** $(1/n)$ in the final model.
+We combine all $n$ sources by averaging their Cumulative Distribution Functions (CDFs).  
+This gives every study an equal vote $(1/n)$ in the final model: 
 
 $$
 P(X \le x) = \frac{1}{n} \sum_{i=1}^{n} \Phi\left(\frac{x - \mu_i}{\sigma_i}\right)
 $$
 
-Where $\Phi$ is the **standard normal CDF**.
+where $\Phi$ is the standard normal CDF.
 
 Using the provided Python script (`probability_analysis_normal.py`), we derive the following statistical model for the Battery GWP (Figure 2):
 
@@ -92,7 +92,7 @@ Using the provided Python script (`probability_analysis_normal.py`), we derive t
 - **95% CI Upper Bound (97.5% quantile):** 179.61 $kg CO_2e/kWh$  
   *The conservative boundary.*
 
-A large Standard Deviation (like the ~33% relative SD we see here) is a quantitative signal of high epistemic uncertainty. It tells the designer that the literature is significantly divided on the true GWP of the battery system.
+A large standard deviation (approximately 33% relative to the mean) is a quantitative signal of high epistemic uncertainty. It tells the designer that the literature is significantly divided on the true GWP of the battery system. Notably, the normal distribution extends beyond the physically plausible bounds implied by the raw data, assigning small but non-zero probability to values outside the original reported range. These tails reflect the model's assumption that values near — but outside — the observed extremes remain possible, though with diminishing likelihood.
 
 ![Figure 2: Normal Distribution](figures/Figure_2_normal.png)
 
@@ -103,7 +103,7 @@ While the Normal distribution assumes a central tendency (that the middle of a r
 For each range [a,b], the Cumulative Distribution Function (CDF) is a linear ramp:
 
 $$
-F(x) = \frac{x-a}{b-a} for a \le x \le b
+F(x) = \frac{x-a}{b-a} \quad \text{for} \quad a \le x \le b
 $$
 
 For scalar values $(D, E, F)$, the CDF is a discrete step function (a jump from 0 to 1 at that exact value).  
@@ -122,13 +122,13 @@ Using the provided Python script (`probability_analysis_uniform.py`), we derive 
 
 ![Figure 3: Normal Distribution](figures/Figure_3_uniform.png)
 
-While the Normal distribution creates smooth S-curves, the Uniform distribution results in a piecewise linear CDF. The curve is composed of two distinct geometric features that correspond directly to our data: The linear ramps represent the ranges (sources A, B, C), with constant rate of cummulating probability across those intervals. The verticla steps represent the scalars (sources D, E, F), where each jump indicates a "point of agreement", where 1/6 (16.6%) of the total probability is concentrated at a single, precise value.  
+While the Normal distribution creates smooth S-curves, the Uniform distribution results in a piecewise linear CDF. The curve is composed of two distinct geometric features that correspond directly to our data: The linear ramps represent the ranges (sources A, B, C), with constant rate of cummulating probability across those intervals. The vertical steps represent the scalars (sources D, E, F), where each jump indicates a "point of agreement", where 1/6 (16.6%) of the total probability is concentrated at a single, precise value.  
 
 ## 3. Evidence Theory (Dempster-Shafer (D-S) Theory)
 
 While Probability Theory forces us to distribute likelihood across a range (even if we don't know the shape), Evidence Theory (also called Dempster-Shafer theory) allows us to measure uncertainty through Belief and Plausibility.
 
-In this model, we assign a Basic Belief Assignment (BBA), denoted as $m$, to each piece of evidence. If we trust our 6 sources equally, each receives a mass of $m=1/6$.
+In this model, we assign a Basic Belief Assignment (BBA), denoted as $m$, to each piece of evidence. If we trust our 6 sources equally, each recieves a mass of $m=1/6$.
 
 - Cumulative Belief Function (CBF - Red): This is the conservative lower bound. For a given value x, the CBF only increases if a study's entire range is below x. The Belief (Bel) (the lower bound) represents the total evidence that strictly supports a proposition. For a GWP value x, Bel(x) is the sum of masses where the entire reported interval is below x. It is our "guaranteed" certainty.
  
@@ -146,7 +146,7 @@ Instead of a single CDF curve, Evidence Theory produces two bounding curves that
 
 ![Figure 4: Evidence Theory](figures/Figure_4_evidence.png)
 
-The gray shaded area between the Blue (Plausibility) and Red (Belief) lines is a direct measurement of our lack of knowledge (ignorance). Where the lines are far apart (e.g., between 90 and 120), the literature is either vague or conflicting. Where they pinch together (e.g., at the scalar points), our certainty is higher because the sources provided precise values. A risk-averse designer would look at the Belief curve (Red) to see what can be proven, while a risk-tolerant designer might look at the Plausibility curve (Blue) to see what is possible.
+The gray shaded area between the Blue (Plausibility) and Red (Belief) lines is a direct measurement of our lack of knowledge (ignorance). Where the lines are far apart (e.g., between 75 and 120), the literature is either vague or conflicting. Where they pinch together (e.g. at the scalar points), our certainty is higher because the sources provided precise values. A risk-averse designer would look at the Belief curve (Red) to see what can be proven, while a risk-tolerant designer might look at the Plausibility curve (Blue) to see what is possible.
 
 We notice that at approximately 115 $kg CO_2e/kWh$, the Cumulative Belief Function (CBF) and Cumulative Plausibility Function (CPF) converge, momentarily eliminating the "Area of Ignorance." This indicates a point of consensus across the disparate literature sources. At this specific threshold, there is no ambiguity: exactly 50% of the evidence supports a GWP of 115 or lower. This is largely driven by the presence of Source E (Pollet et al.), which provides a precise scalar value of 115, effectively anchoring the probability box and providing a moment of certainty amidst the surrounding epistemic gaps. Assume presenting this to a stakeholder, we can point to 115 as your most robust estimate. Unlike other values where we are "guessing" within a gray zone of ignorance, 115 is the value where our conservative evidence (Belief) and our optimistic potential (Plausibility) perfectly align.
 
