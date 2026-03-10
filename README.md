@@ -134,15 +134,15 @@ In this model, we assign a Basic Belief Assignment (BBA), denoted as $m$, to eac
 
 - Cumulative Belief Function (CBF - Red): This is the conservative lower bound. For a given value x, the CBF only increases if a study's entire range is below x. The Belief (Bel) (the lower bound) represents the total evidence that strictly supports a proposition. For a GWP value x, Bel(x) is the sum of masses where the entire reported interval is below x. It is our "guaranteed" certainty.
  
-  $$
-  CBF(x) = \sum_{B \subseteq (-\infty, x]} m(B)
-  $$
+```math
+CBF(x) = \sum_{B \subseteq (-\infty, x]} m(B)
+```
 
 - Cumulative Plausibility Function (CPF - Blue): This is the optimistic upper bound. It represents the evidence that could be true. For a given value x, the CPF increases if even just the lowest point of a study's range is below x. The Plausibility (Pl) (the upper bound) represents the total evidence that could be true (i.e., not yet ruled out). For a GWP value x, Pl(x) is the sum of masses where at least part of the reported interval is below x.
 
-  $$
-  CPF(x) = \sum_{B \cap (-\infty, x] \neq \varnothing} m(B)
-  $$
+```math
+CPF(x) = \sum_{B \cap (-\infty, x] \neq \varnothing} m(B)
+```
 
 Instead of a single CDF curve, Evidence Theory produces two bounding curves that create a Probability Box (P-Box), illustrating how belief and plausibility define a probability interval as lower and upper bounds. Using the provided Python script (`evidence_theory.py`), we visualize the literature data (Figure 4):
 
