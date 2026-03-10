@@ -69,16 +69,13 @@ $$
 
 For scalar values $(D, E, F)$ we assume a small 5% coefficient of variation to account for inherent measurement error.
 
-We combine all $n$ sources by averaging their Cumulative Distribution Functions (CDFs).  
-This gives every study an equal vote $(1/n)$ in the final model: 
+We combine all $n$ sources by averaging their Cumulative Distribution Functions (CDFs). This gives every study an equal vote $(1/n)$ in the final model: 
 
 $$
 P(X \le x) = \frac{1}{n} \sum_{i=1}^{n} \Phi\left(\frac{x - \mu_i}{\sigma_i}\right)
 $$
 
-where $\Phi$ is the standard normal CDF.
-
-Using the provided Python script (`probability_analysis_normal.py`), we derive the following statistical model for the Battery GWP (Figure 2):
+where $\Phi$ is the standard normal CDF. Using the provided Python script (`probability_analysis_normal.py`), we derive the following statistical model for the Battery GWP (Figure 2):
 
 - **Mean ($\mu_{normal}$):** 114.45 $kg CO_2e/kWh$  
   *The "consensus" average of all literature.*
@@ -106,8 +103,7 @@ $$
 F(x) = \frac{x-a}{b-a} \quad \text{for} \quad a \le x \le b
 $$
 
-For scalar values $(D, E, F)$, the CDF is a discrete step function (a jump from 0 to 1 at that exact value).  
-Like the Normal approach, we aggregate these by giving each study a $1/n$ weight:
+For scalar values $(D, E, F)$, the CDF is a discrete step function (a jump from 0 to 1 at that exact value). Like the Normal approach, we aggregate these by giving each study a $1/n$ weight:
 
 $$
 P(X \le x) = \frac{1}{n}\sum_{i=1}^{n} F_i(x)
@@ -126,9 +122,7 @@ While the Normal distribution creates smooth S-curves, the Uniform distribution 
 
 ## 3. Evidence Theory (Dempster-Shafer Theory)
 
-While Probability Theory forces us to distribute likelihood across a range (even if we don't know the shape), Evidence Theory (also called Dempster-Shafer theory) allows us to measure uncertainty through Belief and Plausibility.
-
-In this model, we assign a Basic Belief Assignment (BBA), denoted as $m$, to each piece of evidence. If we trust our 6 sources equally, each recieves a mass of $m=1/6$.
+While Probability Theory forces us to distribute likelihood across a range (even if we don't know the shape), Evidence Theory (also called Dempster-Shafer theory) allows us to measure uncertainty through Belief and Plausibility. In this model, we assign a Basic Belief Assignment (BBA), denoted as $m$, to each piece of evidence. If we trust our 6 sources equally, each recieves a mass of $m=1/6$.
 
 - Cumulative Belief Function (CBF - Red): This is the conservative lower bound. For a given value x, the CBF only increases if a study's entire range is below x. The Belief (Bel) (the lower bound) represents the total evidence that strictly supports a proposition. For a GWP value x, Bel(x) is the sum of masses where the entire reported interval is below x. It is our "guaranteed" certainty.
  
