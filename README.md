@@ -13,7 +13,7 @@ A worked example showing how to transform sparse data into quantifiable uncertai
 
 ## The Data:
 
-We assume to want to perform an early-stage conceptual design an electric vehilce system using lithium-ion battery (LIB) electric propulsion (electric ground vehicle, electric aircraft, electric maritime system etc.). For assesing the lifecycle battery energy specific Global Warming Potential (GWP) ($kg CO_2e/kWh$), that is the time scaled (on 100 years) global warming potential per energy unit (kWh) of the specifc energy the battery we use. We do an intial literature review and find following values:
+Consider an early-stage conceptual design of an electric vehicle system employing lithium-ion battery (LIB) electric propulsion. This encompasses various applications, including electric ground vehicles, aircraft, and maritime systems. To assess the lifecycle Global Warming Potential (GWP) of the battery system, we focus on the specific energy-based metric ($kg CO_2e/kWh$) — the 100-year time-scaled global warming potential per kilowatt-hour of battery energy capacity. An initial literature review yields the following reported values:
 
 | GWP ($kg CO_2e / kWh$) | Value           | Source                     |
 |------------------------|-----------------|----------------------------|
@@ -24,9 +24,7 @@ We assume to want to perform an early-stage conceptual design an electric vehilc
 | 115                    | Scalar          | (E) Pollet et al.[^E]       |
 | 72.9                   | Scalar          | (F) Pontika et al.[^F]      |
 
-As we have multiple sources with different reported values, we are confronted with *epsitemic* uncertainty, categorized as a lack of knowledge. As the real world lifecycle battery energy specific GWP of our future battery system in-use will have a fix value, it is not inherent variable (aletory uncertainty).
-
-In the following, we present three simple ways to quantify the reported values into an uncertainty metrics, that can be further utilized within an decision making process (design, lifecycle assessement, etc.)[^1]. 
+The discrepancy among sources introduces *epistemic* uncertainty, defined as uncertainty due to incomplete knowledge of the system. Crucially, the true lifecycle GWP of the future battery system is a fixed value, albeit unknown at this design stage. This distinguishes it from *aleatory* uncertainty, which arises from inherent variability. The following sections present three approaches to quantify this epistemic uncertainty, translating the sparse literature data into formal uncertainty metrics suitable for integration into decision-making frameworks (e.g., design optimization, lifecycle assessment)[^1].
 
 ## 1. Interval Analysis 
 
